@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lederkompass – Oppgradert lederdashboard</title>
+    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="app-surface">
+    <div class="aurora"></div>
+    <div class="aurora aurora-secondary"></div>
+    <div class="noise-overlay"></div>
+
+    <header class="hero">
+        <div class="hero-text">
+            <p class="headline-chip">Lederrom</p>
+            <h1>Lederkompass 2.0</h1>
+            <p class="subtitle">Et sanntidslederrom med puls, prioriteringer og utviklingsverktøy – i et levende miljø som støtter fokus og relasjoner.</p>
+            <div class="hero-actions">
+                <button class="cta" data-modal-trigger="pulse">Se team-puls</button>
+                <button class="cta secondary" data-modal-trigger="toolkit">Inspirasjon</button>
+            </div>
+        </div>
+        <div class="focus-panel glass-card">
+            <div class="focus-header">
+                <h2>Dagens fokus</h2>
+                <button class="icon-button" id="clearFocus" title="Nullstill fokus">⟲</button>
+            </div>
+            <form id="focusForm">
+                <input id="dailyFocus" type="text" placeholder="Hva skal merkes fra deg i dag?" autocomplete="off" required>
+                <button id="saveFocus" class="primary" type="submit">Forankre</button>
+            </form>
+            <p id="focusStatus" class="focus-status">Ingen fokus registrert enda.</p>
+        </div>
+    </header>
+
+    <main>
+        <section class="insight-band glass-card" id="insightBand">
+            <div>
+                <p class="label">Team-puls</p>
+                <p class="metric" id="pulseAverage">–</p>
+                <p class="hint">Snitt siste 7 dager</p>
+            </div>
+            <div>
+                <p class="label">Strategiske prioriteringer</p>
+                <p class="metric" id="priorityProgress">–</p>
+                <p class="hint">Fullføringsgrad</p>
+            </div>
+            <div>
+                <p class="label">1:1-samtaler</p>
+                <p class="metric" id="oneOnOneNext">–</p>
+                <p class="hint">Neste avtale</p>
+            </div>
+            <div>
+                <p class="label">Administrativ ryddighet</p>
+                <p class="metric" id="adminStatus">–</p>
+                <p class="hint">Oppgaver klare</p>
+            </div>
+        </section>
+
+        <section class="tile-grid">
+            <article class="tile glass-card" data-modal-trigger="pulse">
+                <div class="tile-header">
+                    <span class="emoji">🌡️</span>
+                    <h2>Team-puls</h2>
+                </div>
+                <p>Registrer signaler, mønstre og bekymringer i teamet.</p>
+                <div class="tile-body">
+                    <p class="tile-metric" id="pulseLatest">Ingen registreringer</p>
+                    <div class="tile-footer">
+                        <button class="tile-button">Åpne pulsrom</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="tile glass-card" data-modal-trigger="priority">
+                <div class="tile-header">
+                    <span class="emoji">🎯</span>
+                    <h2>Strategiske prioriteringer</h2>
+                </div>
+                <p>Hold fremdrift, tydeliggjør effekt og feire seire.</p>
+                <div class="tile-body">
+                    <ul class="pill-list" id="priorityPreview"></ul>
+                    <div class="tile-footer">
+                        <button class="tile-button">Prioriter nå</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="tile glass-card" data-modal-trigger="delegation">
+                <div class="tile-header">
+                    <span class="emoji">🤝</span>
+                    <h2>Delegasjon & utvikling</h2>
+                </div>
+                <p>Sikre læringsloop og oppfølging på delegerte oppgaver.</p>
+                <div class="tile-body">
+                    <p class="tile-metric" id="delegationSummary">Ingen aktive planer</p>
+                    <div class="tile-footer">
+                        <button class="tile-button">Planlegg delegasjon</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="tile glass-card" data-modal-trigger="oneOnOne">
+                <div class="tile-header">
+                    <span class="emoji">🗓️</span>
+                    <h2>1:1-planlegger</h2>
+                </div>
+                <p>Skap nærvær og tydelig oppfølging i medarbeidersamtaler.</p>
+                <div class="tile-body">
+                    <p class="tile-metric" id="oneOnOneSummary">Ingen planlagte samtaler</p>
+                    <div class="tile-footer">
+                        <button class="tile-button">Forbered samtale</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="tile glass-card" data-modal-trigger="decision">
+                <div class="tile-header">
+                    <span class="emoji">🧭</span>
+                    <h2>Beslutningsjournal</h2>
+                </div>
+                <p>Bygg læring og klarhet i beslutningene dine.</p>
+                <div class="tile-body">
+                    <p class="tile-metric" id="decisionSummary">Ingen beslutninger logget</p>
+                    <div class="tile-footer">
+                        <button class="tile-button">Logg beslutning</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="tile glass-card" data-modal-trigger="toolkit">
+                <div class="tile-header">
+                    <span class="emoji">🧠</span>
+                    <h2>Coachingbibliotek</h2>
+                </div>
+                <p>Få spørsmål, intervensjoner og mikroøvelser på sekundet.</p>
+                <div class="tile-body">
+                    <blockquote id="promptCurrent">«Hva er neste lille steg som gjør størst forskjell?»</blockquote>
+                    <div class="tile-footer">
+                        <button class="tile-button">Utforsk biblioteket</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="tile glass-card" data-modal-trigger="admin">
+                <div class="tile-header">
+                    <span class="emoji">🗂️</span>
+                    <h2>Administrativt overblikk</h2>
+                </div>
+                <p>Rydd unna frister og sikre at det formelle er på stell.</p>
+                <div class="tile-body">
+                    <p class="tile-metric" id="adminSummary">Ingen åpne oppgaver</p>
+                    <div class="tile-footer">
+                        <button class="tile-button">Oppdater status</button>
+                    </div>
+                </div>
+            </article>
+
+            <article class="tile glass-card" data-modal-trigger="timeline">
+                <div class="tile-header">
+                    <span class="emoji">📈</span>
+                    <h2>Lederpuls-timeline</h2>
+                </div>
+                <p>Visualiser utvikling av fokus, puls og fremdrift over tid.</p>
+                <div class="tile-body">
+                    <canvas id="timelineChart" width="320" height="180" aria-label="Oversikt over data" role="img"></canvas>
+                    <div class="tile-footer">
+                        <button class="tile-button">Åpne detaljvisning</button>
+                    </div>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <footer class="app-footer glass-card">
+        <div>
+            <small>Data lagres sikkert lokalt i nettleseren via IndexedDB. Ingen informasjon deles ut.</small>
+        </div>
+        <div class="version-chip">Versjon 2.0</div>
+    </footer>
+
+    <!-- Modaler -->
+    <div class="modal hidden" data-modal="pulse" role="dialog" aria-modal="true">
+        <div class="modal-panel glass-card">
+            <header class="modal-header">
+                <div>
+                    <h2>Team-pulsrom</h2>
+                    <p>Fang opp signaler og mønstre for teamet ditt.</p>
+                </div>
+                <button class="icon-button" data-modal-close>✕</button>
+            </header>
+            <form id="pulseForm" class="modal-form">
+                <label for="pulseScore">Stemning</label>
+                <div class="option-row">
+                    <select id="pulseScore" required>
+                        <option value="" disabled selected>Velg nivå</option>
+                        <option value="1">1 – Bekymret</option>
+                        <option value="2">2 – Urolig</option>
+                        <option value="3">3 – Stabil</option>
+                        <option value="4">4 – God</option>
+                        <option value="5">5 – Energisk</option>
+                    </select>
+                    <input type="date" id="pulseDate">
+                </div>
+                <label for="pulseNotes">Observasjoner</label>
+                <textarea id="pulseNotes" rows="4" placeholder="Hva hører du? Hva trenger teamet?" required></textarea>
+                <button class="primary" type="submit">Registrer puls</button>
+            </form>
+            <section class="modal-section">
+                <h3>Siste registreringer</h3>
+                <ul id="pulseLog" class="modal-list"></ul>
+            </section>
+        </div>
+    </div>
+
+    <div class="modal hidden" data-modal="priority" role="dialog" aria-modal="true">
+        <div class="modal-panel glass-card">
+            <header class="modal-header">
+                <div>
+                    <h2>Strategiske prioriteringer</h2>
+                    <p>Planlegg, fokuser og marker fremdrift.</p>
+                </div>
+                <button class="icon-button" data-modal-close>✕</button>
+            </header>
+            <form id="priorityForm" class="modal-form">
+                <label for="priorityTitle">Prioritet</label>
+                <input id="priorityTitle" type="text" placeholder="Eks: Etablere tverrfaglige arbeidsdager" required>
+                <label for="priorityImpact">Ønsket effekt</label>
+                <input id="priorityImpact" type="text" placeholder="Hvordan merkes effekten?">
+                <button class="primary" type="submit">Legg til prioritet</button>
+            </form>
+            <section class="modal-section">
+                <h3>Aktive prioriteringer</h3>
+                <ul id="priorityList" class="modal-list"></ul>
+            </section>
+        </div>
+    </div>
+
+    <div class="modal hidden" data-modal="delegation" role="dialog" aria-modal="true">
+        <div class="modal-panel glass-card">
+            <header class="modal-header">
+                <div>
+                    <h2>Delegasjon & utvikling</h2>
+                    <p>Skap mestring og følg opp støtten du lover.</p>
+                </div>
+                <button class="icon-button" data-modal-close>✕</button>
+            </header>
+            <form id="delegationForm" class="modal-form">
+                <label for="delegateName">Medarbeider</label>
+                <input id="delegateName" type="text" placeholder="Hvem skal vokse på dette?" required>
+                <label for="delegateTask">Oppgave</label>
+                <input id="delegateTask" type="text" placeholder="Hva skal løses?" required>
+                <label for="delegateSupport">Din støtte</label>
+                <input id="delegateSupport" type="text" placeholder="Hvilken støtte lover du?">
+                <button class="primary" type="submit">Lagre plan</button>
+            </form>
+            <section class="modal-section">
+                <h3>Oppfølging</h3>
+                <ul id="delegationList" class="modal-list"></ul>
+            </section>
+        </div>
+    </div>
+
+    <div class="modal hidden" data-modal="oneOnOne" role="dialog" aria-modal="true">
+        <div class="modal-panel glass-card">
+            <header class="modal-header">
+                <div>
+                    <h2>1:1-planlegger</h2>
+                    <p>Forbered intensjon, spørsmål og avtaler.</p>
+                </div>
+                <button class="icon-button" data-modal-close>✕</button>
+            </header>
+            <form id="oneOnOneForm" class="modal-form">
+                <label for="oneOnOneName">Medarbeider</label>
+                <input id="oneOnOneName" type="text" placeholder="Navn" required>
+                <label for="oneOnOneDate">Dato</label>
+                <input id="oneOnOneDate" type="date" required>
+                <label for="oneOnOneAgenda">Agenda</label>
+                <textarea id="oneOnOneAgenda" rows="3" placeholder="Temaer, støtte, forpliktelser"></textarea>
+                <button class="primary" type="submit">Legg til 1:1</button>
+            </form>
+            <section class="modal-section">
+                <h3>Kommende samtaler</h3>
+                <ul id="oneOnOneList" class="modal-list"></ul>
+            </section>
+        </div>
+    </div>
+
+    <div class="modal hidden" data-modal="decision" role="dialog" aria-modal="true">
+        <div class="modal-panel glass-card">
+            <header class="modal-header">
+                <div>
+                    <h2>Beslutningsjournal</h2>
+                    <p>Reflekter og gjør læringen synlig.</p>
+                </div>
+                <button class="icon-button" data-modal-close>✕</button>
+            </header>
+            <form id="decisionForm" class="modal-form">
+                <label for="decisionTopic">Tema</label>
+                <input id="decisionTopic" type="text" placeholder="Hva valgte du?" required>
+                <label for="decisionContext">Kontekst</label>
+                <textarea id="decisionContext" rows="3" placeholder="Hva vurderte du?"></textarea>
+                <label for="decisionOutcome">Neste steg</label>
+                <input id="decisionOutcome" type="text" placeholder="Hvordan følger du opp?">
+                <button class="primary" type="submit">Logg beslutning</button>
+            </form>
+            <section class="modal-section">
+                <h3>Historikk</h3>
+                <ul id="decisionList" class="modal-list"></ul>
+            </section>
+        </div>
+    </div>
+
+    <div class="modal hidden" data-modal="toolkit" role="dialog" aria-modal="true">
+        <div class="modal-panel glass-card">
+            <header class="modal-header">
+                <div>
+                    <h2>Coachingbibliotek</h2>
+                    <p>Et kurert utvalg av spørsmål, øvelser og mikrointervensjoner.</p>
+                </div>
+                <button class="icon-button" data-modal-close>✕</button>
+            </header>
+            <section class="modal-section">
+                <h3>Neste spørsmål</h3>
+                <blockquote id="promptDisplay"></blockquote>
+                <div class="prompt-actions">
+                    <button id="newPrompt" class="primary">Gi meg et nytt spørsmål</button>
+                    <button id="savePrompt" class="secondary">Merk som favoritt</button>
+                </div>
+            </section>
+            <section class="modal-section">
+                <h3>Dine favoritter</h3>
+                <ul id="promptFavorites" class="modal-list"></ul>
+            </section>
+        </div>
+    </div>
+
+    <div class="modal hidden" data-modal="admin" role="dialog" aria-modal="true">
+        <div class="modal-panel glass-card">
+            <header class="modal-header">
+                <div>
+                    <h2>Administrativt overblikk</h2>
+                    <p>Fiks frister og få ro til ledelse.</p>
+                </div>
+                <button class="icon-button" data-modal-close>✕</button>
+            </header>
+            <form id="adminForm" class="modal-form">
+                <label for="adminTask">Oppgave</label>
+                <input id="adminTask" type="text" placeholder="Eks: Godkjenn budsjett" required>
+                <label for="adminDue">Frist</label>
+                <input id="adminDue" type="date">
+                <button class="primary" type="submit">Legg til</button>
+            </form>
+            <section class="modal-section">
+                <h3>Oppgaver</h3>
+                <ul id="adminList" class="modal-list"></ul>
+            </section>
+        </div>
+    </div>
+
+    <div class="modal hidden" data-modal="timeline" role="dialog" aria-modal="true">
+        <div class="modal-panel glass-card">
+            <header class="modal-header">
+                <div>
+                    <h2>Lederpuls-timeline</h2>
+                    <p>Se hvordan fokus, puls og fremdrift spiller sammen.</p>
+                </div>
+                <button class="icon-button" data-modal-close>✕</button>
+            </header>
+            <section class="modal-section">
+                <canvas id="timelineModalChart" width="560" height="280" aria-label="Detaljert graf" role="img"></canvas>
+            </section>
+            <section class="modal-section">
+                <h3>Historikk</h3>
+                <ul id="timelineLog" class="modal-list timeline-log"></ul>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/dexie@3.2.3/dist/dexie.min.js" integrity="sha384-3QajW+Kk9rUu4MPyl5PzuMjVxP/60Trw7Pp62NR1CS8SKGQ4FvNOCua6vu8bKh+y" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-tp2qxGn8pY/+bexdFv+DE+z5zkAE9gjbTZUD+Lp8DC+YF8ObX7utXjIB9AHZ+P0L" crossorigin="anonymous"></script>
+    <script src="assets/app.js" type="module"></script>
+</body>
+</html>
