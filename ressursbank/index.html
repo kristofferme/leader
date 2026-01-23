@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ressursbank | Din kunnskapsbase</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Animated background blobs -->
+    <div class="blob-container">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+        <div class="blob blob-4"></div>
+    </div>
+
+    <!-- Doodle decorations -->
+    <svg class="doodle-bg" viewBox="0 0 1200 800" preserveAspectRatio="none">
+        <path class="doodle-line doodle-1" d="M0,100 Q300,150 600,100 T1200,100" fill="none"/>
+        <path class="doodle-line doodle-2" d="M0,700 Q400,650 800,700 T1200,680" fill="none"/>
+        <circle class="doodle-dot" cx="100" cy="200" r="8"/>
+        <circle class="doodle-dot" cx="1100" cy="150" r="6"/>
+        <circle class="doodle-dot" cx="200" cy="600" r="10"/>
+        <circle class="doodle-dot" cx="1050" cy="650" r="7"/>
+        <path class="doodle-squiggle" d="M50,400 q20,-30 40,0 t40,0 t40,0" fill="none"/>
+        <path class="doodle-squiggle" d="M1100,350 q20,-30 40,0 t40,0" fill="none"/>
+    </svg>
+
+    <!-- Main app container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">
+                    <svg viewBox="0 0 40 40" fill="none">
+                        <rect x="4" y="8" width="24" height="28" rx="3" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M10 16h12M10 22h8M10 28h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="30" cy="12" r="8" fill="var(--accent-yellow)" stroke="currentColor" stroke-width="2"/>
+                        <path d="M30 9v6M27 12h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <h1>Ressursbank</h1>
+            </div>
+            <nav class="nav-actions">
+                <button class="btn btn-ghost" id="searchToggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                    </svg>
+                </button>
+                <button class="btn btn-primary" id="newCollectionBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    <span>Ny samling</span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Search overlay -->
+        <div class="search-overlay" id="searchOverlay">
+            <div class="search-box glass-card">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Søk i ressurser, notater, samlinger..." autocomplete="off">
+                <kbd>ESC</kbd>
+            </div>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+
+        <!-- Main content -->
+        <main class="main-content">
+            <!-- Welcome section -->
+            <section class="welcome-section" id="welcomeSection">
+                <div class="welcome-card glass-card">
+                    <div class="welcome-illustration">
+                        <svg viewBox="0 0 200 160" fill="none">
+                            <rect x="20" y="40" width="70" height="90" rx="8" fill="var(--accent-blue)" opacity="0.3"/>
+                            <rect x="30" y="50" width="70" height="90" rx="8" fill="var(--accent-purple)" opacity="0.4"/>
+                            <rect x="40" y="60" width="70" height="90" rx="8" fill="var(--glass-bg)" stroke="var(--glass-border)" stroke-width="2"/>
+                            <path d="M55 85h40M55 100h25M55 115h30" stroke="var(--text-medium)" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="150" cy="60" r="25" fill="var(--accent-yellow)" opacity="0.6"/>
+                            <path d="M140 55l8 8 15-15" stroke="var(--accent-green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path class="floating-star" d="M160 110l3 6 6 1-4 4 1 6-5-3-6 3 1-6-4-4 6-1z" fill="var(--accent-pink)"/>
+                        </svg>
+                    </div>
+                    <div class="welcome-text">
+                        <h2>Velkommen til din ressursbank!</h2>
+                        <p>Samle artikler, videoer og notater på ett sted. Organiser kunnskapen din i tematiske samlinger.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick stats -->
+            <section class="stats-band">
+                <div class="stat-item glass-card">
+                    <span class="stat-icon">📚</span>
+                    <div class="stat-content">
+                        <span class="stat-value" id="statCollections">0</span>
+                        <span class="stat-label">Samlinger</span>
+                    </div>
+                </div>
+                <div class="stat-item glass-card">
+                    <span class="stat-icon">🔗</span>
+                    <div class="stat-content">
+                        <span class="stat-value" id="statResources">0</span>
+                        <span class="stat-label">Ressurser</span>
+                    </div>
+                </div>
+                <div class="stat-item glass-card">
+                    <span class="stat-icon">✏️</span>
+                    <div class="stat-content">
+                        <span class="stat-value" id="statNotes">0</span>
+                        <span class="stat-label">Notater</span>
+                    </div>
+                </div>
+                <div class="stat-item glass-card">
+                    <span class="stat-icon">⭐</span>
+                    <div class="stat-content">
+                        <span class="stat-value" id="statFavorites">0</span>
+                        <span class="stat-label">Favoritter</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Collections grid -->
+            <section class="collections-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="title-doodle">~</span>
+                        Mine samlinger
+                        <span class="title-doodle">~</span>
+                    </h2>
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="grid">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                                <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                            </svg>
+                        </button>
+                        <button class="view-btn" data-view="list">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="collections-grid" id="collectionsGrid">
+                    <!-- Collections rendered here -->
+                </div>
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-illustration">
+                        <svg viewBox="0 0 120 120" fill="none">
+                            <circle cx="60" cy="60" r="50" fill="var(--glass-bg)" stroke="var(--glass-border)" stroke-width="2" stroke-dasharray="8 4"/>
+                            <path d="M60 35v50M35 60h50" stroke="var(--text-dim)" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="90" cy="30" r="8" fill="var(--accent-yellow)" opacity="0.6"/>
+                            <circle cx="25" cy="85" r="6" fill="var(--accent-pink)" opacity="0.6"/>
+                        </svg>
+                    </div>
+                    <h3>Ingen samlinger ennå</h3>
+                    <p>Opprett din første samling for å begynne å organisere ressursene dine!</p>
+                    <button class="btn btn-primary btn-lg" id="emptyNewCollection">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        Opprett samling
+                    </button>
+                </div>
+            </section>
+
+            <!-- Recent activity -->
+            <section class="activity-section" id="activitySection">
+                <h2 class="section-title">
+                    <span class="title-doodle">⚡</span>
+                    Nylig aktivitet
+                </h2>
+                <div class="activity-list" id="activityList">
+                    <!-- Activity items rendered here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Create/Edit Collection Modal -->
+    <div class="modal-overlay" id="collectionModal">
+        <div class="modal glass-card modal-md">
+            <div class="modal-header">
+                <h2 id="collectionModalTitle">Ny samling</h2>
+                <button class="modal-close" data-close>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="collectionForm">
+                <div class="form-group">
+                    <label for="collectionName">Navn på samling</label>
+                    <input type="text" id="collectionName" placeholder="F.eks. Ledelse, UX Design, Produktivitet..." required>
+                </div>
+                <div class="form-group">
+                    <label for="collectionDesc">Beskrivelse (valgfritt)</label>
+                    <textarea id="collectionDesc" rows="3" placeholder="Hva handler denne samlingen om?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Velg farge</label>
+                    <div class="color-picker">
+                        <button type="button" class="color-option active" data-color="blue" style="--color: var(--accent-blue)"></button>
+                        <button type="button" class="color-option" data-color="purple" style="--color: var(--accent-purple)"></button>
+                        <button type="button" class="color-option" data-color="pink" style="--color: var(--accent-pink)"></button>
+                        <button type="button" class="color-option" data-color="green" style="--color: var(--accent-green)"></button>
+                        <button type="button" class="color-option" data-color="yellow" style="--color: var(--accent-yellow)"></button>
+                        <button type="button" class="color-option" data-color="orange" style="--color: var(--accent-orange)"></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Velg ikon</label>
+                    <div class="icon-picker">
+                        <button type="button" class="icon-option active" data-icon="📚">📚</button>
+                        <button type="button" class="icon-option" data-icon="💡">💡</button>
+                        <button type="button" class="icon-option" data-icon="🎯">🎯</button>
+                        <button type="button" class="icon-option" data-icon="🚀">🚀</button>
+                        <button type="button" class="icon-option" data-icon="🎨">🎨</button>
+                        <button type="button" class="icon-option" data-icon="💼">💼</button>
+                        <button type="button" class="icon-option" data-icon="🧠">🧠</button>
+                        <button type="button" class="icon-option" data-icon="⚡">⚡</button>
+                        <button type="button" class="icon-option" data-icon="🌟">🌟</button>
+                        <button type="button" class="icon-option" data-icon="📝">📝</button>
+                        <button type="button" class="icon-option" data-icon="🔬">🔬</button>
+                        <button type="button" class="icon-option" data-icon="🎵">🎵</button>
+                    </div>
+                </div>
+                <input type="hidden" id="collectionId">
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" data-close>Avbryt</button>
+                    <button type="submit" class="btn btn-primary">Lagre samling</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Collection Detail View -->
+    <div class="modal-overlay" id="collectionDetailModal">
+        <div class="modal glass-card modal-full">
+            <div class="modal-header collection-detail-header">
+                <button class="btn btn-ghost btn-icon" data-close>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <div class="collection-info">
+                    <span class="collection-icon" id="detailIcon">📚</span>
+                    <div>
+                        <h2 id="detailTitle">Samlingsnavn</h2>
+                        <p id="detailDesc">Beskrivelse</p>
+                    </div>
+                </div>
+                <div class="collection-actions">
+                    <button class="btn btn-ghost btn-icon" id="editCollectionBtn" title="Rediger samling">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-ghost btn-icon" id="deleteCollectionBtn" title="Slett samling">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="collection-detail-content">
+                <!-- Tabs -->
+                <div class="tab-bar">
+                    <button class="tab-btn active" data-tab="resources">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+                            <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+                        </svg>
+                        Ressurser
+                        <span class="tab-count" id="resourceCount">0</span>
+                    </button>
+                    <button class="tab-btn" data-tab="notes">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+                        </svg>
+                        Notater
+                        <span class="tab-count" id="noteCount">0</span>
+                    </button>
+                </div>
+
+                <!-- Add buttons -->
+                <div class="add-buttons">
+                    <button class="btn btn-outline" id="addResourceBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        Legg til ressurs
+                    </button>
+                    <button class="btn btn-outline" id="addNoteBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        Skriv notat
+                    </button>
+                </div>
+
+                <!-- Tab content -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="resourcesPane">
+                        <div class="resources-list" id="resourcesList"></div>
+                        <div class="empty-tab" id="emptyResources">
+                            <p>Ingen ressurser ennå. Legg til artikler, videoer eller lenker!</p>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="notesPane">
+                        <div class="notes-list" id="notesList"></div>
+                        <div class="empty-tab" id="emptyNotes">
+                            <p>Ingen notater ennå. Start å skrive dine tanker og innsikter!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="currentCollectionId">
+        </div>
+    </div>
+
+    <!-- Add Resource Modal -->
+    <div class="modal-overlay" id="resourceModal">
+        <div class="modal glass-card modal-md">
+            <div class="modal-header">
+                <h2 id="resourceModalTitle">Legg til ressurs</h2>
+                <button class="modal-close" data-close>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="resourceForm">
+                <div class="form-group">
+                    <label for="resourceUrl">URL / Lenke</label>
+                    <input type="url" id="resourceUrl" placeholder="https://..." required>
+                    <span class="input-hint">Lim inn en lenke til artikkel, video eller annet innhold</span>
+                </div>
+                <div class="form-group">
+                    <label for="resourceTitle">Tittel</label>
+                    <input type="text" id="resourceTitle" placeholder="Gi ressursen en tittel" required>
+                </div>
+                <div class="form-group">
+                    <label for="resourceType">Type</label>
+                    <div class="type-selector">
+                        <button type="button" class="type-btn active" data-type="article">
+                            <span class="type-icon">📄</span>
+                            <span>Artikkel</span>
+                        </button>
+                        <button type="button" class="type-btn" data-type="video">
+                            <span class="type-icon">🎬</span>
+                            <span>Video</span>
+                        </button>
+                        <button type="button" class="type-btn" data-type="podcast">
+                            <span class="type-icon">🎧</span>
+                            <span>Podcast</span>
+                        </button>
+                        <button type="button" class="type-btn" data-type="book">
+                            <span class="type-icon">📖</span>
+                            <span>Bok</span>
+                        </button>
+                        <button type="button" class="type-btn" data-type="tool">
+                            <span class="type-icon">🔧</span>
+                            <span>Verktøy</span>
+                        </button>
+                        <button type="button" class="type-btn" data-type="other">
+                            <span class="type-icon">🔗</span>
+                            <span>Annet</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="resourceNotes">Notater (valgfritt)</label>
+                    <textarea id="resourceNotes" rows="3" placeholder="Hvorfor er denne ressursen interessant? Hva vil du huske?"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="resourceTags">Tagger (valgfritt)</label>
+                    <input type="text" id="resourceTags" placeholder="Skill tagger med komma, f.eks: design, ux, tips">
+                </div>
+                <input type="hidden" id="resourceId">
+                <input type="hidden" id="resourceCollectionId">
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" data-close>Avbryt</button>
+                    <button type="submit" class="btn btn-primary">Lagre ressurs</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Note Editor Modal -->
+    <div class="modal-overlay" id="noteModal">
+        <div class="modal glass-card modal-lg">
+            <div class="modal-header">
+                <h2 id="noteModalTitle">Nytt notat</h2>
+                <button class="modal-close" data-close>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="noteForm">
+                <div class="form-group">
+                    <input type="text" id="noteTitle" class="note-title-input" placeholder="Tittel på notat..." required>
+                </div>
+                <div class="editor-toolbar">
+                    <button type="button" class="toolbar-btn" data-command="bold" title="Fet">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z"/><path d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="toolbar-btn" data-command="italic" title="Kursiv">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="toolbar-btn" data-command="underline" title="Understrek">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 3v7a6 6 0 006 6 6 6 0 006-6V3"/><line x1="4" y1="21" x2="20" y2="21"/>
+                        </svg>
+                    </button>
+                    <span class="toolbar-divider"></span>
+                    <button type="button" class="toolbar-btn" data-command="heading" title="Overskrift">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 4v16M18 4v16M6 12h12"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="toolbar-btn" data-command="quote" title="Sitat">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z"/>
+                            <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v4z"/>
+                        </svg>
+                    </button>
+                    <span class="toolbar-divider"></span>
+                    <button type="button" class="toolbar-btn" data-command="ul" title="Punktliste">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                            <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="toolbar-btn" data-command="ol" title="Nummerert liste">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/>
+                            <path d="M4 6h1v4M4 10h2M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="toolbar-btn" data-command="checklist" title="Sjekkliste">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+                        </svg>
+                    </button>
+                    <span class="toolbar-divider"></span>
+                    <button type="button" class="toolbar-btn" data-command="link" title="Lenke">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+                            <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="toolbar-btn" data-command="highlight" title="Markering">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="editor-container">
+                    <div id="noteEditor" class="note-editor" contenteditable="true" placeholder="Skriv ditt notat her..."></div>
+                </div>
+                <div class="form-group">
+                    <label for="noteTags">Tagger (valgfritt)</label>
+                    <input type="text" id="noteTags" placeholder="Skill tagger med komma">
+                </div>
+                <input type="hidden" id="noteId">
+                <input type="hidden" id="noteCollectionId">
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" data-close>Avbryt</button>
+                    <button type="submit" class="btn btn-primary">Lagre notat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Resource Modal -->
+    <div class="modal-overlay" id="viewResourceModal">
+        <div class="modal glass-card modal-md">
+            <div class="modal-header">
+                <div class="resource-type-badge" id="viewResourceType">📄 Artikkel</div>
+                <button class="modal-close" data-close>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="view-resource-content">
+                <h2 id="viewResourceTitle">Tittel</h2>
+                <a href="#" id="viewResourceUrl" target="_blank" class="resource-url">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                        <path d="M15 3h6v6M10 14L21 3"/>
+                    </svg>
+                    <span></span>
+                </a>
+                <div class="resource-notes-section">
+                    <h3>Mine notater</h3>
+                    <p id="viewResourceNotes">Ingen notater</p>
+                </div>
+                <div class="resource-tags" id="viewResourceTags"></div>
+                <div class="resource-meta">
+                    <span id="viewResourceDate"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="editResourceBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    Rediger
+                </button>
+                <button class="btn btn-ghost btn-danger" id="deleteResourceBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    </svg>
+                    Slett
+                </button>
+                <a href="#" id="openResourceBtn" target="_blank" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                        <path d="M15 3h6v6M10 14L21 3"/>
+                    </svg>
+                    Åpne ressurs
+                </a>
+            </div>
+            <input type="hidden" id="viewResourceId">
+        </div>
+    </div>
+
+    <!-- View Note Modal -->
+    <div class="modal-overlay" id="viewNoteModal">
+        <div class="modal glass-card modal-lg">
+            <div class="modal-header">
+                <h2 id="viewNoteTitle">Notattittel</h2>
+                <button class="modal-close" data-close>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="view-note-content">
+                <div id="viewNoteContent" class="rendered-note"></div>
+                <div class="note-tags" id="viewNoteTags"></div>
+                <div class="note-meta">
+                    <span id="viewNoteDate"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="editNoteBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    Rediger
+                </button>
+                <button class="btn btn-ghost btn-danger" id="deleteNoteBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    </svg>
+                    Slett
+                </button>
+            </div>
+            <input type="hidden" id="viewNoteId">
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal glass-card modal-sm">
+            <div class="modal-header">
+                <h2>Bekreft sletting</h2>
+            </div>
+            <div class="confirm-content">
+                <p id="confirmMessage">Er du sikker på at du vil slette dette?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" data-close>Avbryt</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Slett</button>
+            </div>
+            <input type="hidden" id="confirmDeleteType">
+            <input type="hidden" id="confirmDeleteId">
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://unpkg.com/dexie@3.2.3/dist/dexie.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
